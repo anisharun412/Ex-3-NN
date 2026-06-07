@@ -1,7 +1,6 @@
-<H3>ENTER YOUR NAME</H3>
-<H3>ENTER YOUR REGISTER NO.</H3>
+<H3>ENTER YOUR NAME : Arunsamy D</H3>
+<H3>ENTER YOUR REGISTER NO : 212224240016</H3>
 <H3>EX. NO.3</H3>
-<H3>DATE:</H3>
 <H2 aligh = center> Implementation of MLP for a non-linearly separable data</H2>
 <h3>Aim:</h3>
 To implement a perceptron for classification using Python
@@ -36,11 +35,254 @@ Step 3: Repeat the  iteration  until the losses become constant and  minimum<BR>
 Step 4 : Test for the XOR patterns.
 
 <H3>Program:</H3>
-Insert your code here
+
+### Import Libraries
+```py
+import numpy as np
+import matplotlib.pyplot as plt
+```
+
+### Initialize the input vector and output vector for XOR
+```py
+X = np.array([
+    [0,0],
+    [0,1],
+    [1,0],
+    [1,1]
+])
+
+Y = np.array([
+    [0],
+    [1],
+    [1],
+    [0]
+])
+
+print("Input:\n", X)
+print("\nOutput:\n", Y)
+     
+Input:
+ [[0 0]
+ [0 1]
+ [1 0]
+ [1 1]]
+
+Output:
+ [[0]
+ [1]
+ [1]
+ [0]]
+```
+### Initialize the structure of  MLP with input ,hidden  and output layer
+```py
+input_neurons = 2
+hidden_neurons = 2
+output_neurons = 1
+
+learning_rate = 0.1
+epochs = 10000
+
+print("Input Neurons :", input_neurons)
+print("Hidden Neurons:", hidden_neurons)
+print("Output Neurons:", output_neurons)
+
+     
+Input Neurons : 2
+Hidden Neurons: 2
+Output Neurons: 1
+```
+
+### Weight matrix for hidden layer randomly
+```py
+np.random.seed(42)
+
+W1 = np.random.randn(input_neurons, hidden_neurons)
+B1 = np.zeros((1, hidden_neurons))
+
+W2 = np.random.randn(hidden_neurons, output_neurons)
+B2 = np.zeros((1, output_neurons))
+
+print("W1:\n", W1)
+print("\nW2:\n", W2)
+
+     
+W1:
+ [[ 0.49671415 -0.1382643 ]
+ [ 0.64768854  1.52302986]]
+
+W2:
+ [[-0.23415337]
+ [-0.23413696]]
+```
+
+### Sigmoid Activation function
+```py
+def sigmoid(x):
+    return 1 / (1 + np.exp(-x))
+
+# Sigmoid Derivative
+def sigmoid_derivative(x):
+    return x * (1 - x)
+```
+     
+### Forward Propagation
+```py
+def forward_propagation(X, W1, B1, W2, B2):
+
+    hidden_input = np.dot(X, W1) + B1
+
+    hidden_output = sigmoid(hidden_input)
+
+    final_input = np.dot(hidden_output, W2) + B2
+
+    predicted_output = sigmoid(final_input)
+
+    return hidden_output, predicted_output
+``` 
+
+### Backward Propagation
+```py
+def backward_propagation(
+        X,
+        Y,
+        hidden_output,
+        predicted_output,
+        W2):
+
+    d_output = (
+        Y - predicted_output
+    ) * sigmoid_derivative(predicted_output)
+
+    hidden_error = np.dot(
+        d_output,
+        W2.T
+    )
+
+    d_hidden = (
+        hidden_error
+    ) * sigmoid_derivative(hidden_output)
+
+    return d_output, d_hidden
+```
+
+### Update Wrights
+```py
+def update_weights(
+        X,
+        hidden_output,
+        d_output,
+        d_hidden,
+        W1,
+        B1,
+        W2,
+        B2,
+        learning_rate):
+
+    W2 += np.dot( hidden_output.T, d_output ) * learning_rate
+
+    B2 += np.sum( d_output, axis=0, keepdims=True ) * learning_rate
+
+    W1 += np.dot( X.T, d_hidden ) * learning_rate
+
+    B1 += np.sum( d_hidden, axis=0, keepdims=True ) * learning_rate
+
+    return W1, B1, W2, B2
+     
+```
+
+### Train the MLP
+```PY
+def train_network():
+
+    global W1, B1, W2, B2
+
+    losses = []
+
+    for epoch in range(epochs):
+
+        hidden_output, predicted_output = forward_propagation(
+            X,
+            W1,
+            B1,
+            W2,
+            B2
+        )
+
+        error = Y - predicted_output
+
+        loss = np.mean(error ** 2)
+
+        losses.append(loss)
+
+        d_output, d_hidden = backward_propagation(
+            X,
+            Y,
+            hidden_output,
+            predicted_output,
+            W2
+        )
+
+        W1, B1, W2, B2 = update_weights(
+            X,
+            hidden_output,
+            d_output,
+            d_hidden,
+            W1,
+            B1,
+            W2,
+            B2,
+            learning_rate
+        )
+
+    return losses, predicted_output
+
+losses, predicted_output = train_network()
+
+print("Training Completed")
+```
+
+### plot losses to see how our network is doing
+```PY
+plt.plot(losses)
+
+plt.xlabel("Epochs")
+plt.ylabel("Loss")
+
+plt.title("Loss vs Epochs")
+
+plt.grid(True)
+```
+
+### Test the XOR classification
+```PY
+print("Predicted Output")
+print(predicted_output)
+
+binary_output = (predicted_output > 0.5).astype(int)
+print("\nBinary Output")
+print(binary_output)
+```
 
 <H3>Output:</H3>
 
-Show your results here
+### Initialize the input vector and output vector for XOR
+<img width="1740" height="229" alt="image" src="https://github.com/user-attachments/assets/909fab6f-8403-46f3-9c2c-978eb2187fcc" />
+
+### Initialize the structure of MLP with input, hidden  and output layer
+<img width="1111" height="73" alt="image" src="https://github.com/user-attachments/assets/328a9ea8-b58b-4f44-bedc-5e6f6ffce83e" />
+
+###  Weight matrix for hidden layer randomly
+<img width="1422" height="157" alt="image" src="https://github.com/user-attachments/assets/3b448425-5303-4aa4-abb0-660fd70193dc" />
+
+### Training
+<img width="1049" height="172" alt="image" src="https://github.com/user-attachments/assets/f122eabe-c902-4cc4-86ff-f2b6dd8a12c0" />
+
+
+### plot losses to see how our network is doing
+<img width="576" height="455" alt="download" src="https://github.com/user-attachments/assets/2e0f15a6-fe4d-46bd-9dd6-ad4b730a5a7e" />
+
+### Test the XOR classification
+<img width="1055" height="233" alt="image" src="https://github.com/user-attachments/assets/892d29ed-d4e3-4b28-b7de-d055b95072df" />
 
 <H3> Result:</H3>
 Thus, XOR classification problem can be solved using MLP in Python 
